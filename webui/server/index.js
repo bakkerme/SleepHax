@@ -1,6 +1,4 @@
 const Database = require('better-sqlite3');
-// const r = require('rambda');
-// const fs = require('fs');
 const express = require('express');
 const bodyParser = require('body-parser');
 
@@ -24,10 +22,11 @@ router.route('/session/:sessionId')
   .get((req, res) => {
     const sessionId = Number.parseInt(req.params.sessionId);
 
-    const sleepSessionQuery = db.prepare('SELECT * FROM SLEEPEVENT WHERE SESSION=@sessionId');
+    const sleepSessionQuery = db.prepare('SELECT * FROM SLEEPEVENT WHERE session=@sessionId');
     const rows = sleepSessionQuery.all({sessionId: sessionId});
 
-    res.json({ message: {count:  rows.length}});   
+    res.set('Access-Control-Allow-Origin', '*');
+    res.json({count:  rows.length, events: rows});   
   });
 
 app.use('/', router);

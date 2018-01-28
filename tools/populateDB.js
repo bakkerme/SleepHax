@@ -9,7 +9,7 @@ const db = new Database('./data/sleepdata.db', {
 });
 
 const asTransactionWithDb = asTransaction(db);
-const insertSleepEvent = db.prepare('INSERT INTO SLEEPEVENT (SESSION, INTENSITY, TIME) VALUES (@session, @intensity, @time)');
+const insertSleepEvent = db.prepare('INSERT INTO SLEEPEVENT (session, intensity, time) VALUES (@session, @intensity, @time)');
 
 fs.readFile('./data/transitional/eventlog.json', 'utf8', function(err, data) {
   if(err) {
