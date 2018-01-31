@@ -1,23 +1,26 @@
 import Chart from 'chart.js';
-import r from 'rambda';
+import * as R from 'ramda';
 
-const drawLine = (data) => {
+const drawLine = (data, labels) => {
   const ctx = document.getElementById('chart').getContext('2d');
   new Chart(ctx, {
     type: 'line',
     data: {
+      labels: labels,
       datasets: [{
         label: 'sleep intensity',
         data: data,
-        borderWidth: 1
+        fill: false,
+        borderColor: "rgb(75, 192, 192)"
       }]
     },
     options: {
       scales: {
         yAxes: [{
-          ticks: {
-            beginAtZero:true
-          }
+          labelString: "Intensity"
+        }],
+        xAxes: [{
+          labelString: "Time"
         }]
       }
     }
@@ -29,11 +32,10 @@ fetch('http://localhost:8080/session/1', { method: 'get' }).then(function(respon
 }).then(function(j) {
   console.log(j); 
 
-  const intensitys = r.map(j.events, (v) => {
-    return v.intensity;
-  });
+  const intensitys = R.map(R.prop('intensity'), j.events);
+  const times = R.map(R.prop('time'), j.events);
 
-  drawLine(intensitys);
+  drawLine(intensitys, times);
 }).catch((error) => {
   console.error(error);
 });
