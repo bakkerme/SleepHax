@@ -1,6 +1,7 @@
 const Database = require('better-sqlite3');
 const express = require('express');
 const bodyParser = require('body-parser');
+const sampleData = require('../../tools/data');
 
 const db = new Database('./data/sleepdata.db', {
   fileMustExist: true
@@ -22,11 +23,11 @@ router.route('/session/:sessionId')
   .get((req, res) => {
     const sessionId = Number.parseInt(req.params.sessionId);
 
-    const sleepSessionQuery = db.prepare('SELECT * FROM SLEEPEVENT WHERE session=@sessionId');
+    const sleepSessionQuery = db.prepare('SELECT * FROM SLEEPEVENT WHERE session=@sessionId ORDER BY time');
     const rows = sleepSessionQuery.all({sessionId: sessionId});
 
     res.set('Access-Control-Allow-Origin', '*');
-    res.json({count:  rows.length, events: rows});   
+    res.json({count:  rows.length, events: sampleData(rows, 'time')});   
   });
 
 app.use('/', router);
