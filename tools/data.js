@@ -6,14 +6,18 @@ const sampleData = (data, prop, period = 5) => {
     (acc, val) => {
       const time = moment.unix(R.prop(prop, val));
       const remainder = time.minutes() % period;
-      console.log(remainder, val.time);
-      const roundedTimestamp = time.add('minutes', remainder).unix();
+      const roundedTimestamp = time.subtract('minutes', remainder).unix();
 
       if(!acc[roundedTimestamp]) {
         acc[roundedTimestamp] = [];
       }
 
-      acc[roundedTimestamp].push(val);
+      const updatedVal = {
+        ...val,
+        time: roundedTimestamp
+      };
+
+      acc[roundedTimestamp].push(updatedVal);
 
       return acc;
     },
@@ -21,21 +25,21 @@ const sampleData = (data, prop, period = 5) => {
     data
   );
 
-  // note: ramda doesn't support reducing objects
-  // mapObjIndexed might work
-  return R.reduce(
-    (acc, val, key) => {
+  const out = R.mapObjIndexed(
+    (val) => {
       const intensities = R.map(R.prop('intensity'), val);
       const averageI = R.mean(intensities);
 
-      acc[key] = {
-        ...val,
+      return {
+        ...val[0],
         intensity: averageI
       };
     },
-    [],
     grouped
   );
+
+  console.log(R.map((t) => moment.unix(t).format('h:mm'), R.keys(out)));
+  return out;
 };
 
 module.exports =  sampleData;
