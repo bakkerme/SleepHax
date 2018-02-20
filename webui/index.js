@@ -1,36 +1,58 @@
 import Chart from 'chart.js';
 import * as R from 'ramda';
 import moment from 'moment';
+import Highcharts from 'highcharts';
 
 const dataToTime = R.compose((t) => moment.unix(t).format('h:mm'), R.prop('time'));
 
 const drawLine = (data, labels) => {
-  const ctx = document.getElementById('chart').getContext('2d');
-  new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'sleep intensity',
-        data: data,
-        fill: false,
-        borderColor: "rgb(75, 192, 192)",
-        borderWidth: 2,
-        cubicInterpolationMode: 'monotone',
-        pointRadius: 0
-      }]
+  var myChart = Highcharts.chart('chart', {
+    chart: {
+      type: 'bar'
     },
-    options: {
-      scales: {
-        yAxes: [{
-          labelString: "Intensity"
-        }],
-        xAxes: [{
-          labelString: "Time",
-        }]
+    title: {
+      text: 'Sleep Quality'
+    },
+    xAxis: {
+      // categories: ['Apples', 'Bananas', 'Oranges'],
+      title: {
+        text: 'Time'
       }
-    }
+    },
+    yAxis: {
+      title: {
+        text: 'Intensity'
+      }
+    },
+    series: data
   });
+
+  // const ctx = document.getElementById('chart').getContext('2d');
+  // new Chart(ctx, {
+    // type: 'line',
+    // data: {
+      // labels: labels,
+      // datasets: [{
+        // label: 'sleep intensity',
+        // data: data,
+        // fill: false,
+        // borderColor: "rgb(75, 192, 192)",
+        // borderWidth: 2,
+        // cubicInterpolationMode: 'monotone',
+        // pointRadius: 0
+      // }]
+    // },
+    // options: {
+      // scales: {
+        // yAxes: [{
+          // labelString: "Intensity"
+        // }],
+        // xAxes: [{
+          // labelString: "Time",
+        // }]
+      // }
+    // }
+  // });
 };
 
 fetch('http://localhost:8080/session/100', { method: 'get' }).then(function(response) {
